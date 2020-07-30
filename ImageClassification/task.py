@@ -2,7 +2,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import os
 # SET CPU ONLY MODE
-os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+#os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
 
 from alex_net import alex_net
@@ -42,8 +42,8 @@ VALIDATION_LABELS = '../../ILSVRC2012_devkit_t12/data/ILSVRC2012_validation_grou
 
 TOTAL_VAL_IMAGES = 50000
 
-TOTAL_TRAIN_IMAGES = 75000
-#TOTAL_TRAIN_IMAGES = 163000
+#TOTAL_TRAIN_IMAGES = 75000
+TOTAL_TRAIN_IMAGES = 200
 
 TARGET_SIZE = (224, 224)
 BATCH_SIZE = 32
@@ -52,6 +52,8 @@ EPOCHS = 40
 
 
 print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
+print(tf.config.experimental.list_physical_devices('GPU'))
+
 try: 
     tf.config.experimental.set_memory_growth(physical_devices[0], True) 
 except: 
@@ -76,8 +78,7 @@ def generate_train_iterator():
     # create generator
     datagen = ImageDataGenerator()
 
-    #train_path = join(IMAGENET_PATH, 'ILSVRC2012_img_train/')
-    train_path = '../../subset01_24'
+    train_path = join(IMAGENET_PATH, 'ILSVRC2012_img_train/')
     train_it = datagen.flow_from_directory(train_path,
                                            target_size=TARGET_SIZE,
                                            class_mode='categorical',
@@ -181,7 +182,7 @@ class CustomModelCheckpointCallback(tf.keras.callbacks.Callback):
         print("logs: ", logs)
         current_epoch = epoch + 1 + self.starting_epoch
 
-        path = self.path + "Weights-MobileNetV2-75-100-{epoch:02d}.hdf5".format(epoch = current_epoch)
+        path = self.path + "Weights-MobileNetV2-{epoch:02d}.hdf5".format(epoch = current_epoch)
         print(f"Saving model \"{path}\"")
         self.model.save_weights(path)
 
@@ -197,11 +198,26 @@ class CustomModelCheckpointCallback(tf.keras.callbacks.Callback):
         print('Evaluating: batch {} ends at {}'.format(batch, datetime.datetime.now().time()))
     """
 
+
 if __name__ == "__main__":
 
-    model = keras.applications.mobilenet_v2.MobileNetV2(weights = None)
-    model.summary()
+    """
+    mirrored strategy is for multi-GPU execution
+    'Data parallelism': consists in replicating the target model once on each device, 
+        and using each replica to process a different fraction of the input data.
+    """
+    # tf.config.experimental.list_physical_devices('GPU')
+    print("devices in strategy:", [f"/gpu:{i}" for i in range(len(tf.config.experimental.list_physical_devices('GPU')))])
+    strategy = tf.distribute.MirroredStrategy(devices=[f"/gpu:{i}" for i in range(len(tf.config.experimental.list_physical_devices('GPU')))])
+    
+    with strategy.scope():
 
+        model = tf.keras.applications.ResNet50V2(weights = None)
+        model.summary()
+        # Compile the model
+        model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+     # LOAD LAST WEIGHTS
     weights = get_last_weights('./snapshots')
     last_epoch = 0
 
@@ -215,8 +231,6 @@ if __name__ == "__main__":
         result = p.search(weights[0])
         last_epoch = int(result.group(1))
 
-    # Compile the model
-    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
     checkpoint = CustomModelCheckpointCallback(starting_epoch=last_epoch)
 

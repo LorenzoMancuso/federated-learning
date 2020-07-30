@@ -27,3 +27,6 @@ rsync -azv --append-verify --stats --human-readable --info=progress2 --exclude="
 rsync -azv --append-verify --stats --human-readable --info=progress2 --exclude="res" -e 'ssh -i /home/lore/.ssh/mancuso_federated -J lmancuso@130.192.137.199' lmancuso@device18:/home/lmancuso/federated-learning/ /home/lore/Projects/Progresses/16_nodes_async/device18-progresses
 rsync -azv --append-verify --stats --human-readable --info=progress2 --exclude="res" -e 'ssh -i /home/lore/.ssh/mancuso_federated -J lmancuso@130.192.137.199' lmancuso@device19:/home/lmancuso/federated-learning/ /home/lore/Projects/Progresses/16_nodes_async/device19-progresses
 rsync -azv --append-verify --stats --human-readable --info=progress2 --exclude="res" -e 'ssh -i /home/lore/.ssh/mancuso_federated -J lmancuso@130.192.137.199' lmancuso@device20:/home/lmancuso/federated-learning/ /home/lore/Projects/Progresses/16_nodes_async/device20-progresses
+
+
+rsync -azv --append-verify --stats --human-readable --info=progress2 --exclude="res" -e 'ssh -i /home/lore/.ssh/mancuso_federated -J lmancuso@130.192.137.199' lmancuso@gpu-worker:/home/lmancuso/federated-learning/ /home/lore/Projects/Progresses/gpu_worker_512

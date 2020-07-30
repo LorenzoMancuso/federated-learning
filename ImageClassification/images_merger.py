@@ -27,19 +27,27 @@ def merge_subset(path: str, destination_path) -> dict:
                             if isfile(join(class_path, f))]
             
             destination_sub_path = join(destination_path,c)
-            os.mkdir(destination_sub_path)
+            
+            try:
+                os.mkdir(destination_sub_path)
+            except OSError:
+                print("Creation of the directory %s failed" % destination_sub_path)
 
             for im in images_list:
                 image_path = join(class_path, im)
                 print(image_path, destination_sub_path)
-                move(image_path, destination_sub_path) # source, destination             
+                try:
+                    move(image_path, destination_sub_path) # source, destination             
+                except:
+                    print(f"{image_path} already exists")
     
 
 base_destination_path = TEST_PATH
 new_directory = join(base_destination_path, 'merged')
 
 try:
-    os.mkdir(new_directory)
+    #os.mkdir(new_directory)
+    pass
 except OSError:
     raise OSError("Creation of the directory %s failed" % new_directory)
 
