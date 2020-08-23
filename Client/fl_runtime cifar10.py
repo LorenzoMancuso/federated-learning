@@ -27,13 +27,13 @@ MQTT_URL = '172.20.8.119'
 MQTT_PORT = 1883
 
 
-IMAGENET_PATH = '/mnt/dataset/subset'
-TOTAL_IMAGES = 82000
-TARGET_SIZE = (224, 224)
+#IMAGENET_PATH = '/mnt/dataset/subset'
+#TOTAL_IMAGES = 82000
+TARGET_SIZE = (32, 32)
 BATCH_SIZE = 32
 EPOCHS = 1
 
-TOTAL_CLIENTS_NUMBER = 16
+TOTAL_CLIENTS_NUMBER = 4
 CLIENT_NUMBER = 1
 
 
@@ -185,7 +185,8 @@ class FederatedTask():
             pass
 
         # INIT MODEL
-        self.model = keras.applications.mobilenet_v2.MobileNetV2()
+        self.model = keras.applications.mobilenet_v2.MobileNetV2(input_shape = TARGET_SIZE + (3,), classes = 10, weights = None)
+        #self.model = keras.applications.ResNet50V2(input_shape = TARGET_SIZE + (3,), classes = 10, weights = None)
         self.model.summary()
         # Compile the model
         self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -218,8 +219,10 @@ class FederatedTask():
     
         # prepare an iterators for each dataset
         section_length = math.ceil(len(x_train) / TOTAL_CLIENTS_NUMBER)
-        starting_index = (section_length * CLIENT_NUMBER) - 1
-        ending_index = min(len(x_train), starting_index + section_length) -1
+
+        starting_index = (section_length) * (CLIENT_NUMBER -1)
+
+        ending_index = min(len(x_train), starting_index + section_length)
 
         self.train_it = (x_train[starting_index : ending_index], y_train[starting_index : ending_index])
 

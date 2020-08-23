@@ -152,7 +152,7 @@ if __name__ == "__main__":
     VALIDATION
     """
 
-    print(f"evaluate model in {val_steps} steps")
+    print(f"evaluate model")
 
     score = model.fit(x_test, y_test, batch_size=BATCH_SIZE, epochs=EPOCHS - last_epoch, use_multiprocessing=True, callbacks=[checkpoint])
     

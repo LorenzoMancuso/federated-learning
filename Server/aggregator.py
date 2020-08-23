@@ -4,11 +4,12 @@ extra = {'actor_name':'AGGREGATOR'}
 import paho.mqtt.client as mqtt
 from thespian.actors import *
 from common import *
-from model_utils import ModelUtils
+#from model_utils import ModelUtils
+from model_utils_cifar10 import ModelUtils
 import json
 from json import JSONEncoder
 import sys
-
+import time
 import numpy as np
 
 MQTT_URL = '172.20.8.119'
@@ -72,7 +73,7 @@ class AggregatorActor(Actor):
             logging.warning("Connection failed. Retrying in 1 second...", extra=extra)
             
             time.sleep(1)
-            self.client.connect(MQTT_URL, MQTT_PORT, 60)
+            client.connect(MQTT_URL, MQTT_PORT, 60)
 
 
     def __init__(self, keep_alive: int = 60):
