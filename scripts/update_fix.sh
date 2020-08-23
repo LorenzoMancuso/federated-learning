@@ -5,7 +5,7 @@ REMOVE_COMMAND="rm -rf ~/federated-learning"
 COMMAND="ssh -o StrictHostKeyChecking=no -i $CERT_PATH -J $PROXY"
 
 # coordinator
-#rsync -azv --append-verify --stats --human-readable --info=progress2 --exclude=".*" --exclude="res" -e "$COMMAND" /home/lore/Projects/federated-learning lmancuso@coordinator:/home/lmancuso/
+#rsync -azv --stats --human-readable --info=progress2 --exclude=".*" --exclude="res" -e "$COMMAND" /home/lore/Projects/github/federated-learning/Server/ lmancuso@coordinator:/home/lmancuso/federated-learning/Server/
 
 
 
