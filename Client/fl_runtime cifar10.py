@@ -33,6 +33,9 @@ TARGET_SIZE = (224, 224)
 BATCH_SIZE = 32
 EPOCHS = 1
 
+TOTAL_CLIENTS_NUMBER = 16
+CLIENT_NUMBER = 1
+
 
 class FederatedTask():
 
@@ -64,7 +67,8 @@ class FederatedTask():
 
         time_start = time.time()
 
-        train_history = self.model.fit_generator(self.train_it, steps_per_epoch=math.ceil(TOTAL_IMAGES / BATCH_SIZE), epochs=EPOCHS)
+        #train_history = self.model.fit_generator(self.train_it, steps_per_epoch=math.ceil(TOTAL_IMAGES / BATCH_SIZE), epochs=EPOCHS)
+        train_history = self.model.fit(self.train_it[0], self.train_it[1], batch_size=BATCH_SIZE, epochs=EPOCHS)
 
         logger.info(f"[TRAIN-TIME] Completed local training in {(time.time() - time_start) / 60} minutes.")
 
@@ -115,12 +119,12 @@ class FederatedTask():
         }
 
         # publishes on MQTT topic
-        publication = self.client.publish("topic/fl-broadcast", json.dumps(send_msg, cls=self.NumpyArrayEncoder), qos=1);
+        publication = self.client.publish("topic/fl-broadcast", json.dumps(send_msg, cls=self.NumpyArrayEncoder), qos=1)
         logger.debug(f"Result code: {publication[0]} Mid: {publication[1]}")
 
         while publication[0] != 0:
             self.client.connect(MQTT_URL, MQTT_PORT, 60)
-            publication = self.client.publish("topic/fl-broadcast", json.dumps(send_msg, cls=self.NumpyArrayEncoder), qos=1);
+            publication = self.client.publish("topic/fl-broadcast", json.dumps(send_msg, cls=self.NumpyArrayEncoder), qos=1)
             logger.debug(f"Result code: {publication[0]} Mid: {publication[1]}")
 
 
@@ -199,14 +203,25 @@ class FederatedTask():
             result = p.search(weights_checkpoints[0])
             self.epoch = int(result.group(1))
 
+        
         # create generator
-        datagen = ImageDataGenerator()
+        #datagen = ImageDataGenerator()
+        (x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar10.load_data() 
+
+        # convert and preprocess
+        y_train = keras.utils.to_categorical(y_train, 10) 
+        y_test = keras.utils.to_categorical(y_test, 10)
+        x_train = x_train.astype('float32')
+        x_test = x_test.astype('float32')
+        x_train  /= 255
+        x_test /= 255
+    
         # prepare an iterators for each dataset
-        self.train_it = datagen.flow_from_directory(IMAGENET_PATH,
-                                            target_size=TARGET_SIZE,
-                                            class_mode='categorical',
-                                            color_mode='rgb',
-                                            batch_size=BATCH_SIZE)
+        section_length = math.ceil(len(x_train) / TOTAL_CLIENTS_NUMBER)
+        starting_index = (section_length * CLIENT_NUMBER) - 1
+        ending_index = min(len(x_train), starting_index + section_length) -1
+
+        self.train_it = (x_train[starting_index : ending_index], y_train[starting_index : ending_index])
 
         # create mqtt client
         self.new_weights = {'update': None}

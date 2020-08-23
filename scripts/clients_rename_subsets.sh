@@ -3,7 +3,7 @@ CERT_PATH="/home/lore/Scaricati/mancuso_federated"
 
 #ssh -i $CERT_PATH -J $PROXY lmancuso@coordinator "cd /mnt/dataset ; mv subset0 subset"
 
-#ssh -i $CERT_PATH -J $PROXY lmancuso@node01 "cd /mnt/dataset ; mv subset01 subset"
+ssh -i $CERT_PATH -J $PROXY lmancuso@node01 "cd /mnt/dataset ; mv subset01 subset"
 ssh -i $CERT_PATH -J $PROXY lmancuso@node02 "cd /mnt/dataset ; mv subset02 subset"
 ssh -i $CERT_PATH -J $PROXY lmancuso@node03 "cd /mnt/dataset ; mv subset03 subset"
 ssh -i $CERT_PATH -J $PROXY lmancuso@node04 "cd /mnt/dataset ; mv subset04 subset"

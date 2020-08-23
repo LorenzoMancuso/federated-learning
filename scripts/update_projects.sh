@@ -27,7 +27,7 @@ COMMAND="ssh -o StrictHostKeyChecking=no -i $CERT_PATH -J $PROXY"
 #rsync -azv -I --ignore-times --stats --human-readable --info=progress2 --exclude=".*" --exclude="res" --exclude="__pycache__" -e "$COMMAND" /home/lore/Projects/federated-learning lmancuso@node04:/home/lmancuso/
 
 
-#rsync -azv -I --ignore-times --stats --human-readable --info=progress2 --exclude=".*" --exclude="res" --exclude="__pycache__" -e "ssh -i /home/lore/Scaricati/mancuso_federated -J lmancuso@130.192.137.199" /home/lore/Projects/federated-learning/tff.yml lmancuso@device1:/home/lmancuso/federated-learning/
+#rsync -azv -I --ignore-times --stats --human-readable --info=progress2 --exclude=".*" --exclude="res" --exclude="__pycache__" -e "ssh -i /home/lore/Scaricati/mancuso_federated -J lmancuso@130.192.137.199" /home/lore/Projects/github/federated-learning/ImageClassification/task_cifar10.py lmancuso@gpu-worker:/home/lmancuso/federated-learning/ImageClassification
 
 
 ## device01

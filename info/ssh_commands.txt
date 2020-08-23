@@ -2,7 +2,7 @@
 CONNESSIONE REMOTA CON PROXY-JUMP:
     ssh -J your.jump.host remote.internal.host
     
-    ssh -i /home/lore/.ssh/mancuso_federated -J lmancuso@130.192.137.199  lmancuso@node05
+    ssh -i /home/lore/Scaricati/mancuso_federated -J lmancuso@130.192.137.199  lmancuso@gpu-worker
 
 
 COPIA RSYNC ON PROXY-JUMP:

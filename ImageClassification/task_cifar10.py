@@ -35,8 +35,8 @@ session = InteractiveSession(config=config)
 
 
 TARGET_SIZE = (32, 32)
-BATCH_SIZE = 8
-EPOCHS = 40
+BATCH_SIZE = 512
+EPOCHS = 100
 
 
 
@@ -70,7 +70,7 @@ class CustomModelCheckpointCallback(tf.keras.callbacks.Callback):
         print("logs: ", logs)
         current_epoch = epoch + 1 + self.starting_epoch
 
-        path = self.path + "Weights-MobileNetV2-Cifar10-{epoch:02d}.hdf5".format(epoch = current_epoch)
+        path = self.path + "Weights-ResNet50V2-Cifar10-{epoch:02d}.hdf5".format(epoch = current_epoch)
         print(f"Saving model \"{path}\"")
         self.model.save_weights(path)
 
@@ -100,8 +100,8 @@ if __name__ == "__main__":
     
     with strategy.scope():
 
-        model = tf.keras.applications.MobileNetV2(input_shape = TARGET_SIZE + (3,), classes = 10, weights = None)
-        # model = tf.keras.applications.ResNet50V2(input_shape = TARGET_SIZE + (3,), weights = None)
+        #model = tf.keras.applications.MobileNetV2(input_shape = TARGET_SIZE + (3,), classes = 10, weights = None)
+        model = tf.keras.applications.ResNet50V2(input_shape = TARGET_SIZE + (3,), classes = 10, weights = None)
         model.summary()
         # Compile the model
         model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
