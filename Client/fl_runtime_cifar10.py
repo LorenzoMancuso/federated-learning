@@ -185,8 +185,8 @@ class FederatedTask():
             pass
 
         # INIT MODEL
-        #self.model = keras.applications.mobilenet_v2.MobileNetV2(input_shape = TARGET_SIZE + (3,), classes = 10, weights = None)
-        self.model = keras.applications.ResNet50V2(input_shape = TARGET_SIZE + (3,), classes = 10, weights = None)
+        self.model = keras.applications.mobilenet_v2.MobileNetV2(input_shape = TARGET_SIZE + (3,), classes = 10, weights = None)
+        #self.model = keras.applications.ResNet50V2(input_shape = TARGET_SIZE + (3,), classes = 10, weights = None)
         self.model.summary()
         # Compile the model
         self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -223,7 +223,7 @@ class FederatedTask():
         starting_index = (section_length) * (CLIENT_NUMBER -1)
 
         ending_index = min(len(x_train), starting_index + section_length)
-
+        logging.info(f"starting_index: {starting_index}, ending_index: {ending_index}")
         self.train_it = (x_train[starting_index : ending_index], y_train[starting_index : ending_index])
 
         # create mqtt client

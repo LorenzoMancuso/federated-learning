@@ -100,8 +100,8 @@ if __name__ == "__main__":
     
     with strategy.scope():
 
-        #model = tf.keras.applications.MobileNetV2(input_shape = TARGET_SIZE + (3,), classes = 10, weights = None)
-        model = tf.keras.applications.ResNet50V2(input_shape = TARGET_SIZE + (3,), classes = 10, weights = None)
+        model = tf.keras.applications.MobileNetV2(input_shape = TARGET_SIZE + (3,), classes = 10, weights = None)
+        #model = tf.keras.applications.ResNet50V2(input_shape = TARGET_SIZE + (3,), classes = 10, weights = None)
         model.summary()
         # Compile the model
         model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])

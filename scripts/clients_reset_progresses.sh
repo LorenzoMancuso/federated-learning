@@ -13,30 +13,30 @@ echo 'device3'
 ssh -i $CERT_PATH -J $PROXY lmancuso@device3 "cd federated-learning/Client/snapshots; rm -rfv ./*"
 echo 'device4'
 ssh -i $CERT_PATH -J $PROXY lmancuso@device4 "cd federated-learning/Client/snapshots; rm -rfv ./*"
-#echo 'device5'
-#ssh -i $CERT_PATH -J $PROXY lmancuso@device5 "cd federated-learning/Client/snapshots; rm -rfv ./*"
-#echo 'device6'
-#ssh -i $CERT_PATH -J $PROXY lmancuso@device6 "cd federated-learning/Client/snapshots; rm -rfv ./*"
-#echo 'device7'
-#ssh -i $CERT_PATH -J $PROXY lmancuso@device7 "cd federated-learning/Client/snapshots; rm -rfv ./*"
-#echo 'device8'
-#ssh -i $CERT_PATH -J $PROXY lmancuso@device8 "cd federated-learning/Client/snapshots; rm -rfv ./*"
-#echo 'device9'
-#ssh -i $CERT_PATH -J $PROXY lmancuso@device9 "cd federated-learning/Client/snapshots; rm -rfv ./*"
-#echo 'device10'
-#ssh -i $CERT_PATH -J $PROXY lmancuso@device10 "cd federated-learning/Client/snapshots; rm -rfv ./*"
-#echo 'device11'
-#ssh -i $CERT_PATH -J $PROXY lmancuso@device11 "cd federated-learning/Client/snapshots; rm -rfv ./*"
-#echo 'device12'
-#ssh -i $CERT_PATH -J $PROXY lmancuso@device12 "cd federated-learning/Client/snapshots; rm -rfv ./*"
-#echo 'device13'
-#ssh -i $CERT_PATH -J $PROXY lmancuso@device13 "cd federated-learning/Client/snapshots; rm -rfv ./*"
-#echo 'device14'
-#ssh -i $CERT_PATH -J $PROXY lmancuso@device14 "cd federated-learning/Client/snapshots; rm -rfv ./*"
-#echo 'device15'
-#ssh -i $CERT_PATH -J $PROXY lmancuso@device15 "cd federated-learning/Client/snapshots; rm -rfv ./*"
-#echo 'device16'
-#ssh -i $CERT_PATH -J $PROXY lmancuso@device16 "cd federated-learning/Client/snapshots; rm -rfv ./*"
+echo 'device5'
+ssh -i $CERT_PATH -J $PROXY lmancuso@device5 "cd federated-learning/Client/snapshots; rm -rfv ./*"
+echo 'device6'
+ssh -i $CERT_PATH -J $PROXY lmancuso@device6 "cd federated-learning/Client/snapshots; rm -rfv ./*"
+echo 'device7'
+ssh -i $CERT_PATH -J $PROXY lmancuso@device7 "cd federated-learning/Client/snapshots; rm -rfv ./*"
+echo 'device8'
+ssh -i $CERT_PATH -J $PROXY lmancuso@device8 "cd federated-learning/Client/snapshots; rm -rfv ./*"
+echo 'device9'
+ssh -i $CERT_PATH -J $PROXY lmancuso@device9 "cd federated-learning/Client/snapshots; rm -rfv ./*"
+echo 'device10'
+ssh -i $CERT_PATH -J $PROXY lmancuso@device10 "cd federated-learning/Client/snapshots; rm -rfv ./*"
+echo 'device11'
+ssh -i $CERT_PATH -J $PROXY lmancuso@device11 "cd federated-learning/Client/snapshots; rm -rfv ./*"
+echo 'device12'
+ssh -i $CERT_PATH -J $PROXY lmancuso@device12 "cd federated-learning/Client/snapshots; rm -rfv ./*"
+echo 'device13'
+ssh -i $CERT_PATH -J $PROXY lmancuso@device13 "cd federated-learning/Client/snapshots; rm -rfv ./*"
+echo 'device14'
+ssh -i $CERT_PATH -J $PROXY lmancuso@device14 "cd federated-learning/Client/snapshots; rm -rfv ./*"
+echo 'device15'
+ssh -i $CERT_PATH -J $PROXY lmancuso@device15 "cd federated-learning/Client/snapshots; rm -rfv ./*"
+echo 'device16'
+ssh -i $CERT_PATH -J $PROXY lmancuso@device16 "cd federated-learning/Client/snapshots; rm -rfv ./*"
 #echo 'device17'
 #ssh -i $CERT_PATH -J $PROXY lmancuso@device17 "cd federated-learning/Client/snapshots; rm -rfv ./*"
 #echo 'device18'

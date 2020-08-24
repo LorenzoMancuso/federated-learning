@@ -136,7 +136,7 @@ class ModelUtils(metaclass = Singleton):
         x_train  /= 255
         x_test /= 255
     
-        self.valid_it = x_test
+        self.valid_it = (x_train, y_train)
 
         te = time.time()
 
