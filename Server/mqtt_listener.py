@@ -6,7 +6,10 @@ import threading
 import json
 from common import *
 from thespian.actors import *
+import time
 
+import pickle
+import zlib
 
 class MqttListener():
     
@@ -16,7 +19,9 @@ class MqttListener():
         logging.info("Device communication received", extra=extra)
 
         try:            
-            msg_obj = json.loads(msg.payload)
+            #msg_obj = json.loads(msg.payload)
+            msg_obj = pickle.loads(zlib.decompress(compressed))
+
             logging.info(f"device: {msg_obj['device']}", extra=extra)
 
             new_device = Device(msg_obj['device'], msg_obj['data'])
@@ -57,11 +62,12 @@ class MqttListener():
             logging.info("Connection failed. Retrying in 1 second...", extra=extra)
             
             time.sleep(1)
-            self.client.connect(MQTT_URL, MQTT_PORT, 60)
+            # self.client.connect(MQTT_URL, MQTT_PORT, 60)
 
 
     def __init__(self, url: str, port: int, collector: dict, keep_alive: int = 60):
         # MQTT CLIENT CONNECTION TO MESSAGE BROKER
+        
         client = mqtt.Client(userdata = collector)
         
         client.connect(url, port, keep_alive)

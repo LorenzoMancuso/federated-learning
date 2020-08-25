@@ -12,6 +12,9 @@ import sys
 import time
 import numpy as np
 
+import pickle
+import zlib
+
 MQTT_URL = '172.20.8.119'
 MQTT_PORT = 1883
 
@@ -43,7 +46,12 @@ class AggregatorActor(Actor):
             for layer_weights in averaged_weights:
                 total_bytes += layer_weights.nbytes
 
-            publication = self.client.publish("topic/fl-update", json.dumps(averaged_weights, cls=self.NumpyArrayEncoder), qos=1)
+            compressed = zlib.compress(pickle.dumps(averaged_weights))
+
+            #publication = self.client.publish("topic/fl-update", json.dumps(averaged_weights, cls=self.NumpyArrayEncoder), qos=1)
+            publication = self.client.publish("topic/fl-update", compressed, qos=1)
+            
+            
             logging.debug(f"Result code: {publication[0]} Mid: {publication[1]} PayloadWeight: {sys.getsizeof(total_bytes)}", extra=extra)
             
             

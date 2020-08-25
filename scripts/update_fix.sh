@@ -34,3 +34,5 @@ rsync -azv --stats --human-readable --info=progress2 --exclude=".*" --exclude="r
 #rsync -azv -I --stats --human-readable --info=progress2 --exclude=".*" --exclude="res" --exclude="__pycache__" -e "$COMMAND" /home/lore/Projects/federated-learning/Client/ lmancuso@device18:/home/lmancuso/federated-learning/Client/
 #rsync -azv -I --stats --human-readable --info=progress2 --exclude=".*" --exclude="res" --exclude="__pycache__" -e "$COMMAND" /home/lore/Projects/federated-learning/Client/ lmancuso@device19:/home/lmancuso/federated-learning/Client/
 #rsync -azv -I --stats --human-readable --info=progress2 --exclude=".*" --exclude="res" --exclude="__pycache__" -e "$COMMAND" /home/lore/Projects/federated-learning/Client/ lmancuso@device20:/home/lmancuso/federated-learning/Client
+
+rsync -azv -I --stats --human-readable --info=progress2 --exclude=".*" --exclude="res" --exclude="__pycache__" -e "ssh -o StrictHostKeyChecking=no -i /home/lore/Scaricati/mancuso_federated -J lmancuso@130.192.137.199" /home/lore/Projects/github/federated-learning/Client/fl_runtime_cifar10.py lmancuso@device1:/home/lmancuso/federated-learning/Client/

@@ -23,6 +23,9 @@ import os
 from os import listdir
 from os.path import isfile, join
 
+import pickle
+import zlib
+
 MQTT_URL = '172.20.8.119'
 MQTT_PORT = 1883
 
@@ -33,8 +36,8 @@ TARGET_SIZE = (32, 32)
 BATCH_SIZE = 32
 EPOCHS = 1
 
-TOTAL_CLIENTS_NUMBER = 4
-CLIENT_NUMBER = 1
+TOTAL_CLIENTS_NUMBER = 16
+CLIENT_NUMBER = 16
 
 
 class FederatedTask():
@@ -99,7 +102,8 @@ class FederatedTask():
         self.model.save_weights("snapshots/Local-Weights-node01-MobileNetV2-{epoch:02d}.hdf5".format(epoch=self.epoch))
         logger.info("Saved checkpoint 'Local-Weights-node01-MobileNetV2-{epoch:02d}.hdf5'.".format(epoch=self.epoch))
 
-
+    
+    # UNUSED with compressed messages
     class NumpyArrayEncoder(JSONEncoder):
         def default(self, obj):
             if isinstance(obj, numpy.ndarray):
@@ -119,7 +123,11 @@ class FederatedTask():
         }
 
         # publishes on MQTT topic
-        publication = self.client.publish("topic/fl-broadcast", json.dumps(send_msg, cls=self.NumpyArrayEncoder), qos=1)
+        compressed = zlib.compress(pickle.dumps(send_msg))
+        #publication = self.client.publish("topic/fl-broadcast", json.dumps(send_msg, cls=self.NumpyArrayEncoder), qos=1)
+        # send compressed message
+        publication = self.client.publish("topic/fl-broadcast", compressed, qos=1)
+
         logger.debug(f"Result code: {publication[0]} Mid: {publication[1]}")
 
         while publication[0] != 0:
@@ -138,7 +146,9 @@ class FederatedTask():
 
             logger.info("Weights loaded successfully")
 
-            userdata['new_weights']['update'] = weights
+            #userdata['new_weights']['update'] = weights
+            # Decompress weights
+            userdata['new_weights']['update'] = pickle.loads(zlib.decompress(weights))
 
         except Exception as e:
             logger.warning(f'Error loading weights: {e}')
