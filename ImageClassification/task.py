@@ -49,7 +49,7 @@ TARGET_SIZE = (224, 224)
 BATCH_SIZE = 32
 EPOCHS = 40
 
-
+GPU_NAME = '/device:GPU:0'
 
 print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
 print(tf.config.experimental.list_physical_devices('GPU'))
@@ -199,23 +199,12 @@ class CustomModelCheckpointCallback(tf.keras.callbacks.Callback):
     """
 
 
-if __name__ == "__main__":
 
-    """
-    mirrored strategy is for multi-GPU execution
-    'Data parallelism': consists in replicating the target model once on each device, 
-        and using each replica to process a different fraction of the input data.
-    """
-    # tf.config.experimental.list_physical_devices('GPU')
-    print("devices in strategy:", [f"/gpu:{i}" for i in range(len(tf.config.experimental.list_physical_devices('GPU')))])
-    strategy = tf.distribute.MirroredStrategy(devices=[f"/gpu:{i}" for i in range(len(tf.config.experimental.list_physical_devices('GPU')))])
-    
-    with strategy.scope():
-
-        model = tf.keras.applications.ResNet50V2(weights = None)
-        model.summary()
-        # Compile the model
-        model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+def main():
+    model = tf.keras.applications.ResNet50V2(weights = None)
+    model.summary()
+    # Compile the model
+    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
      # LOAD LAST WEIGHTS
     weights = get_last_weights('./snapshots')
@@ -281,3 +270,18 @@ if __name__ == "__main__":
 
     score = model.evaluate_generator(valid_it, steps=val_steps, use_multiprocessing=True, verbose=1)
     print("Loss: ", score[0], "Accuracy: ", score[1])
+
+if __name__ == "__main__":
+    """
+    mirrored strategy is for multi-GPU execution
+    'Data parallelism': consists in replicating the target model once on each device, 
+        and using each replica to process a different fraction of the input data.
+    """
+    # tf.config.experimental.list_physical_devices('GPU')
+    #print("devices in strategy:", [f"/gpu:{i}" for i in range(len(tf.config.experimental.list_physical_devices('GPU')))])
+    #strategy = tf.distribute.MirroredStrategy(devices=[f"/gpu:{i}" for i in range(len(tf.config.experimental.list_physical_devices('GPU')))])
+    #with strategy.scope():
+    
+    print("\nGPU_NAME: ", GPU_NAME)
+    with tf.device(GPU_NAME):
+        main()

@@ -6,8 +6,8 @@ import random
 from datetime import datetime
 import math
 
-SOURCE_PATH = '/media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/ILSVRC2012_img_train'
-DESTINATION_PATH = '/media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET'
+SOURCE_PATH = '/mnt/dataset/IMAGENET/ILSVRC2012_img_train'
+DESTINATION_PATH = '/mnt/dataset/IMAGENET'
 TOTAL_CLASSES = 1000
 
 def generate_subset(path: str, images_percentage, destination_path) -> dict:
@@ -119,4 +119,4 @@ else:
     print ("Successfully created the directory %s " % new_directory)
 
 #generate_subset(SOURCE_PATH, 50, new_directory)
-split_dataset(SOURCE_PATH, 16, new_directory)
+split_dataset(SOURCE_PATH, 4, new_directory)
