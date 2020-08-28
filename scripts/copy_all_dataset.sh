@@ -114,3 +114,6 @@ rsync -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAN
 ##ssh -i $CERT_PATH -J $PROXY lmancuso@device4 "rm -rf /home/lmancuso/dataset/subset*"
 #rsync -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAND" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset24 lmancuso@device20:/home/lmancuso/dataset/
 #
+
+
+rsync -azv --bwlimit=2000 --append-verify --stats --human-readable --info=progress2 -e "ssh -i /home/lore/Scaricati/mancuso_federated -J lmancuso@130.192.137.199" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset1 lmancuso@gpu-worker:/mnt/dataset/IMAGENET/
