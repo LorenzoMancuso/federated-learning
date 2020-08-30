@@ -196,8 +196,8 @@ class FederatedTask():
             pass
 
         # INIT MODEL
-        self.model = keras.applications.mobilenet_v2.MobileNetV2(input_shape = TARGET_SIZE + (3,), classes = 10, weights = None)
-        #self.model = keras.applications.ResNet50V2(input_shape = TARGET_SIZE + (3,), classes = 10, weights = None)
+        #self.model = keras.applications.mobilenet_v2.MobileNetV2(input_shape = TARGET_SIZE + (3,), classes = 10, weights = None)
+        self.model = keras.applications.ResNet50V2(input_shape = TARGET_SIZE + (3,), classes = 10, weights = None)
         self.model.summary()
         # Compile the model
         self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])

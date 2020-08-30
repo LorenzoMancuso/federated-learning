@@ -8,7 +8,7 @@ import time
 from aggregator import AggregatorActor
 from selector import SelectorActor
 
-SLEEP_TIME = 60 * 15
+SLEEP_TIME = 60 * 120
 #SLEEP_TIME = 60 
 
 class CoordinatorActor(Actor):

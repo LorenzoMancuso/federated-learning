@@ -40,6 +40,7 @@ TOTAL_CLIENTS_NUMBER = 16
 CLIENT_NUMBER = 3
 
 GPU_INDEX = 0
+GPU_NAME = ''
 
 class FederatedTask():
 
@@ -68,24 +69,31 @@ class FederatedTask():
 
 
     def training(self):
-        with tf.device(GPU_NAME):
-            time_start = time.time()
+        if GPU_NAME != '':
+            with tf.device(GPU_NAME):
+                self.training_core(self)
+        else:
+            self.training_core(self)
 
-            #train_history = self.model.fit_generator(self.train_it, steps_per_epoch=math.ceil(TOTAL_IMAGES / BATCH_SIZE), epochs=EPOCHS)
-            train_history = self.model.fit(self.train_it[0], self.train_it[1], batch_size=BATCH_SIZE, epochs=EPOCHS)
 
-            logger.info(f"[TRAIN-TIME] Completed local training in {(time.time() - time_start) / 60} minutes.")
+    def training_core(self):
+        time_start = time.time()
 
-            self.epoch += 1
+        #train_history = self.model.fit_generator(self.train_it, steps_per_epoch=math.ceil(TOTAL_IMAGES / BATCH_SIZE), epochs=EPOCHS)
+        train_history = self.model.fit(self.train_it[0], self.train_it[1], batch_size=BATCH_SIZE, epochs=EPOCHS)
 
-            #SAVES CHECKPOINT
-            self.save_checkpoint()
-            
-            #SAVES LOG
-            print(train_history.history)
-            self.save_log(train_history.history['loss'][-1], train_history.history['accuracy'][-1], (time.time() - time_start))
-            
-            return self.model
+        logger.info(f"[TRAIN-TIME] Completed local training in {(time.time() - time_start) / 60} minutes.")
+
+        self.epoch += 1
+
+        #SAVES CHECKPOINT
+        self.save_checkpoint()
+        
+        #SAVES LOG
+        print(train_history.history)
+        self.save_log(train_history.history['loss'][-1], train_history.history['accuracy'][-1], (time.time() - time_start))
+        
+        return self.model
 
 
     def save_log(self, loss, accuracy, time):
@@ -188,7 +196,7 @@ class FederatedTask():
         return weights
 
        
-    def main():
+    def main(self):
         self.client_id = client_id
     
         try:
@@ -197,7 +205,7 @@ class FederatedTask():
             pass
 
         # INIT MODEL
-        #self.model = keras.applications.mobilenet_v2.MobileNetV2(input_shape = TARGET_SIZE + (3,), classes = 10, weights = None)
+        self.model = keras.applications.mobilenet_v2.MobileNetV2(input_shape = TARGET_SIZE + (3,), classes = 10, weights = None)
         self.model = keras.applications.ResNet50V2(input_shape = TARGET_SIZE + (3,), classes = 10, weights = None)
         self.model.summary()
         # Compile the model
@@ -255,12 +263,13 @@ class FederatedTask():
 
     def __init__(self, client_id=-1):
         try:
-            gpu_name = tf.config.experimental.list_physical_devices('GPU')[GPU_INDEX]
+            GPU_NAME = tf.config.experimental.list_physical_devices('GPU')[GPU_INDEX]
             
             print("GPU_INDEX: ", GPU_INDEX, "GPU_NAME: ", gpu_name)
 
-            with tf.device(gpu_name):
+            with tf.device(GPU_NAME):
                 self.main()
+                
         except:
 
             print("\nNO GPU DETECTED!\n")

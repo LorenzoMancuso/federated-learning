@@ -13,8 +13,9 @@ ch.setFormatter(formatter)
 # add ch to logger
 logger.addHandler(ch)
 
-#import fl_runtime
-import fl_runtime_cifar10 as fl_runtime
+import fl_runtime
+#import fl_runtime_cifar10 as fl_runtime
+#import fl_runtime_multi_client as fl_runtime
 import time
 
 client_id = int(time.time())

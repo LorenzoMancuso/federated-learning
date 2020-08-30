@@ -4,8 +4,8 @@ extra = {'actor_name':'AGGREGATOR'}
 import paho.mqtt.client as mqtt
 from thespian.actors import *
 from common import *
-#from model_utils import ModelUtils
-from model_utils_cifar10 import ModelUtils
+from model_utils import ModelUtils
+#from model_utils_cifar10 import ModelUtils
 import json
 from json import JSONEncoder
 import sys
