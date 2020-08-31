@@ -20,7 +20,7 @@ class MqttListener():
 
         try:            
             #msg_obj = json.loads(msg.payload)
-            msg_obj = pickle.loads(zlib.decompress(compressed))
+            msg_obj = pickle.loads(zlib.decompress(msg.payload))
 
             logging.info(f"device: {msg_obj['device']}", extra=extra)
 

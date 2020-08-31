@@ -132,7 +132,8 @@ class FederatedTask():
 
         while publication[0] != 0:
             self.client.connect(MQTT_URL, MQTT_PORT, 60)
-            publication = self.client.publish("topic/fl-broadcast", json.dumps(send_msg, cls=self.NumpyArrayEncoder), qos=1)
+            publication = self.client.publish("topic/fl-broadcast", compressed, qos=1)
+
             logger.debug(f"Result code: {publication[0]} Mid: {publication[1]}")
 
 

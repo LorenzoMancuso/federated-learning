@@ -132,8 +132,8 @@ class ModelUtils(metaclass = Singleton):
         except:
             pass
 
-        self.model = keras.applications.mobilenet_v2.MobileNetV2(weights=None)
-        #self.model = keras.applications.ResNet50V2(weights=None)
+        #self.model = keras.applications.mobilenet_v2.MobileNetV2(weights=None)
+        self.model = keras.applications.ResNet50V2(weights=None)
         # Compile the model
         self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
         

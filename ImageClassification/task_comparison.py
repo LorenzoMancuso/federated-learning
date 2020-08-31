@@ -36,9 +36,9 @@ config.gpu_options.allow_growth = True
 session = InteractiveSession(config=config)
 
 #IMAGENET_PATH = '../../'
-IMAGENET_PATH = '/media/lore/EA72A48772A459D9/ILSVRC2012'
+IMAGENET_PATH = '/media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET'
 
-VALIDATION_LABELS = '../../ILSVRC2012_devkit_t12/data/ILSVRC2012_validation_ground_truth.txt'
+VALIDATION_LABELS = '/media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/ILSVRC2012_devkit_t12/data/ILSVRC2012_validation_ground_truth.txt'
 
 TOTAL_VAL_IMAGES = 50000
 
@@ -201,31 +201,20 @@ class CustomModelCheckpointCallback(tf.keras.callbacks.Callback):
 
 
 def main():
-    model = tf.keras.applications.MobileNetV2(weights = None)
+    model1 = tf.keras.applications.MobileNetV2()
+    model2 = tf.keras.applications.MobileNetV2(weights = None)
     #model = tf.keras.applications.ResNet50V2(weights = None)
-    model.summary()
+    #model.summary()
     # Compile the model
-    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    model1.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    model2.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-     # LOAD LAST WEIGHTS
-    weights = get_last_weights('./snapshots')
-    last_epoch = 0
-
-    if len(weights) > 0:
-        print(f"Loading Weights from {weights[0]} ...")
-        model.load_weights(weights[0])
-        print("Done.\n")
-
-        # get last epoch number
-        p = re.compile("-(\w+).hdf5")
-        result = p.search(weights[0])
-        last_epoch = int(result.group(1))
-
-
-    checkpoint = CustomModelCheckpointCallback(starting_epoch=last_epoch)
+    
+    checkpoint = CustomModelCheckpointCallback(starting_epoch=0)
 
     """
     TRAIN ITERATOR
+    """
     """
     print(f"Generating train iterator from {join(IMAGENET_PATH, 'ILSVRC2012_img_train_75_100/')} ...")
     ts = time.time()
@@ -236,7 +225,7 @@ def main():
     te = time.time()
 
     print(f"Train iterator finished in {te - ts} seconds ({(te - ts) / 60} minutes)\n")
-
+    """
     """
     VALIDATION ITERATOR
     """
@@ -253,6 +242,7 @@ def main():
     """
     FIT
     """
+    """
     print(f"Starting training ...")
     ts = time.time()
 
@@ -262,15 +252,18 @@ def main():
     te = time.time()
 
     print(f"Epoch of train iterator finished in {te - ts} seconds ({(te - ts) / 60} minutes)")
-
+    """
     """
     VALIDATION
     """
 
     print(f"evaluate model in {val_steps} steps")
 
-    score = model.evaluate_generator(valid_it, steps=val_steps, use_multiprocessing=True, verbose=1)
-    print("Loss: ", score[0], "Accuracy: ", score[1])
+    score = model1.evaluate_generator(valid_it, steps=val_steps, use_multiprocessing=True, verbose=1)
+    print("[Model pretrained] Loss: ", score[0], "Accuracy: ", score[1])
+
+    score = model2.evaluate_generator(valid_it, steps=val_steps, use_multiprocessing=True, verbose=1)
+    print("[Model random] Loss: ", score[0], "Accuracy: ", score[1])
 
 if __name__ == "__main__":
     """

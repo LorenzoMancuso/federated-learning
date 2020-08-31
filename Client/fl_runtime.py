@@ -23,6 +23,9 @@ import os
 from os import listdir
 from os.path import isfile, join
 
+import pickle
+import zlib
+
 MQTT_URL = '172.20.8.119'
 MQTT_PORT = 1883
 
@@ -115,12 +118,17 @@ class FederatedTask():
         }
 
         # publishes on MQTT topic
-        publication = self.client.publish("topic/fl-broadcast", json.dumps(send_msg, cls=self.NumpyArrayEncoder), qos=1);
+        compressed = zlib.compress(pickle.dumps(send_msg))
+        #publication = self.client.publish("topic/fl-broadcast", json.dumps(send_msg, cls=self.NumpyArrayEncoder), qos=1)
+        # send compressed message
+        publication = self.client.publish("topic/fl-broadcast", compressed, qos=1)
+
         logger.debug(f"Result code: {publication[0]} Mid: {publication[1]}")
 
         while publication[0] != 0:
             self.client.connect(MQTT_URL, MQTT_PORT, 60)
-            publication = self.client.publish("topic/fl-broadcast", json.dumps(send_msg, cls=self.NumpyArrayEncoder), qos=1);
+            publication = self.client.publish("topic/fl-broadcast", compressed, qos=1)
+
             logger.debug(f"Result code: {publication[0]} Mid: {publication[1]}")
 
 
@@ -130,11 +138,14 @@ class FederatedTask():
 
         try:
             logger.info("Loading Weights from message ...")
-            weights = json.loads(msg.payload)
-
+            #weights = json.loads(msg.payload)
+            # Decompress weights
+            userdata['new_weights']['update'] = pickle.loads(zlib.decompress(msg.payload))
+            
             logger.info("Weights loaded successfully")
 
-            userdata['new_weights']['update'] = weights
+            #userdata['new_weights']['update'] = weights
+            
 
         except Exception as e:
             logger.warning(f'Error loading weights: {e}')
@@ -181,8 +192,8 @@ class FederatedTask():
             pass
 
         # INIT MODEL
-        self.model = keras.applications.mobilenet_v2.MobileNetV2(weights=None)
-        #self.model = keras.applications.ResNet50V2(weights=None)
+        #self.model = keras.applications.mobilenet_v2.MobileNetV2(weights=None)
+        self.model = keras.applications.ResNet50V2(weights=None)
 
         self.model.summary()
         # Compile the model
