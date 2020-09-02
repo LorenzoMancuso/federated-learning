@@ -26,15 +26,18 @@ from os.path import isfile, join
 import pickle
 import zlib
 
-MQTT_URL = '172.20.8.119'
+MQTT_URL = '172.20.8.111'
 MQTT_PORT = 1883
 
 
-IMAGENET_PATH = '/home/lmancuso/dataset/subset'
-TOTAL_IMAGES = 82000
+IMAGENET_PATH = '/mnt/dataset/subset1'
+TOTAL_IMAGES = 325000
 TARGET_SIZE = (224, 224)
 BATCH_SIZE = 32
 EPOCHS = 1
+
+GPU_INDEX = 0
+GPU_NAME = ''
 
 
 class FederatedTask():
@@ -107,7 +110,6 @@ class FederatedTask():
 
 
     def send_local_update_to_server(self):
-
         # select training data related to selected clients
         model_weights = self.model.get_weights()
 
@@ -127,8 +129,7 @@ class FederatedTask():
 
         while publication[0] != 0:
             self.client.connect(MQTT_URL, MQTT_PORT, 60)
-            publication = self.client.publish("topic/fl-broadcast", compressed, qos=1)
-
+            publication = self.client.publish("topic/fl-broadcast", json.dumps(send_msg, cls=self.NumpyArrayEncoder), qos=1)
             logger.debug(f"Result code: {publication[0]} Mid: {publication[1]}")
 
 
@@ -182,7 +183,7 @@ class FederatedTask():
         return weights
 
 
-    def __init__(self, client_id=-1):
+    def main(self, client_id=-1):
 
         self.client_id = client_id
 
@@ -192,9 +193,8 @@ class FederatedTask():
             pass
 
         # INIT MODEL
-        #self.model = keras.applications.mobilenet_v2.MobileNetV2(weights=None)
-        self.model = keras.applications.ResNet50V2(weights=None)
-
+        self.model = keras.applications.mobilenet_v2.MobileNetV2(weights = None)
+        #self.model = keras.applications.ResNet50V2(weights = None)
         self.model.summary()
         # Compile the model
         self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -234,3 +234,17 @@ class FederatedTask():
 
         
         self.client.loop_start()
+
+    
+    def __init__(self, client_id=-1):
+        try:
+            GPU_NAME = f'/gpu:{GPU_INDEX}'
+            print("GPU_INDEX: ", GPU_INDEX, "GPU_NAME: ", GPU_NAME)
+
+            with tf.device(GPU_NAME):
+                self.main(client_id)
+                
+        except:
+
+            print("\nNO GPU DETECTED!\n")
+            self.main(client_id)

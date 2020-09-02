@@ -1,5 +1,5 @@
 import logging
-extra = {'actor_name':'MODEL-UTILS'}
+extra = {'actor_name':'MODEL-UTILS-CIFAR10'}
 
 import time
 import math
@@ -7,6 +7,7 @@ import warnings
 import numpy as np
 import pandas as pd
 from keras.preprocessing.image import ImageDataGenerator
+import tensorflow as tf
 
 from common import Singleton
 from imagenet_classes import classes as in_classes
@@ -23,8 +24,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
 import keras
 
-TOTAL_VAL_IMAGES = 50000
-TARGET_SIZE = (224, 224)
+TARGET_SIZE = (32, 32)
 BATCH_SIZE = 32
 
 class ModelUtils(metaclass = Singleton):
@@ -51,8 +51,10 @@ class ModelUtils(metaclass = Singleton):
         logging.info(f"Set new weights.", extra=extra)
         
         # make test on validation iterator
-        logging.info(f"evaluate model in {self.val_steps} steps")
-        score = self.model.evaluate_generator(self.valid_it, steps=self.val_steps, use_multiprocessing=True, verbose=1)
+        logging.info(f"evaluate model")
+        
+        score = self.model.evaluate(self.valid_it[0], self.valid_it[1], batch_size=BATCH_SIZE)
+        
         logging.info(f"Val Loss: {score[0]} , Val Accuracy: {score[1]}")
         
         self.epoch += 1
@@ -82,41 +84,6 @@ class ModelUtils(metaclass = Singleton):
         logging.info("Saved checkpoint 'Local-Weights-node01-MobileNetV2-{epoch:02d}.hdf5'.".format(epoch=self.epoch), extra=extra)
     
 
-    def generate_validation_iterator(self):
-        # IMAGES
-        validation_images_path = './res/ILSVRC2012_img_val/val/'
-        validations_labels_path = './res/ILSVRC2012_devkit_t12/data/ILSVRC2012_validation_ground_truth.txt'
-
-        validation_x = [f for f in listdir(validation_images_path)
-                        if isfile(join(validation_images_path, f))]
-        validation_x.sort()
-
-        # LABELS
-        with open(validations_labels_path) as f:
-            content = f.readlines()
-        # you may also want to remove whitespace characters like `\n` at the end of each line
-        validation_y = [in_classes[int(x.strip())][0] for x in content]
-
-        # merge images and labels
-        validation_sequence = [[validation_x[i], validation_y[i]] for i in range(0, len(validation_x))]
-        validation_dataframe = pd.DataFrame(validation_sequence, columns = ['x', 'y'])
-
-        # create generator
-        datagen = ImageDataGenerator()
-
-        valid_it = datagen.flow_from_dataframe(
-            dataframe=validation_dataframe,
-            directory=validation_images_path,
-            x_col='x',
-            y_col='y',
-            target_size=TARGET_SIZE,
-            class_mode="categorical",
-            color_mode= 'rgb',
-            batch_size=BATCH_SIZE)
-
-        return valid_it
-
-
     def get_last_weights(self, path):
         weights = [join(path, f) for f in listdir(path)
                 if isfile(join(path, f)) and 'Averaged-Weights' in f]
@@ -132,8 +99,9 @@ class ModelUtils(metaclass = Singleton):
         except:
             pass
 
-        #self.model = keras.applications.mobilenet_v2.MobileNetV2(weights=None)
-        self.model = keras.applications.ResNet50V2(weights=None)
+        self.model = keras.applications.mobilenet_v2.MobileNetV2(input_shape = TARGET_SIZE + (3,), classes = 10, weights = None)
+        #self.model = keras.applications.ResNet50V2(input_shape = TARGET_SIZE + (3,), classes = 10, weights = None)
+
         # Compile the model
         self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
         
@@ -155,11 +123,20 @@ class ModelUtils(metaclass = Singleton):
         """
         VALIDATION ITERATOR
         """
-        logging.info(f"Generating train iterator from './res/ILSVRC2012_img_val/val/') ...")
+        logging.info(f"Generating train iterator from tf.keras.datasets.cifar10 ...")
         ts = time.time()
 
-        self.valid_it = self.generate_validation_iterator()
-        self.val_steps = math.ceil(TOTAL_VAL_IMAGES / BATCH_SIZE)
+        (x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar10.load_data() 
+
+        # convert and preprocess
+        y_train = keras.utils.to_categorical(y_train, 10) 
+        y_test = keras.utils.to_categorical(y_test, 10)
+        x_train = x_train.astype('float32')
+        x_test = x_test.astype('float32')
+        x_train  /= 255
+        x_test /= 255
+    
+        self.valid_it = (x_train, y_train)
 
         te = time.time()
 

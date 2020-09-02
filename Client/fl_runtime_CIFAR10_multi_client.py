@@ -30,12 +30,17 @@ MQTT_URL = '172.20.8.119'
 MQTT_PORT = 1883
 
 
-IMAGENET_PATH = '/home/lmancuso/dataset/subset'
-TOTAL_IMAGES = 82000
-TARGET_SIZE = (224, 224)
+#IMAGENET_PATH = '/mnt/dataset/subset'
+#TOTAL_IMAGES = 82000
+TARGET_SIZE = (32, 32)
 BATCH_SIZE = 32
 EPOCHS = 1
 
+TOTAL_CLIENTS_NUMBER = 16
+CLIENT_NUMBER = 3
+
+GPU_INDEX = 0
+GPU_NAME = ''
 
 class FederatedTask():
 
@@ -64,10 +69,18 @@ class FederatedTask():
 
 
     def training(self):
+        if GPU_NAME != '':
+            with tf.device(GPU_NAME):
+                self.training_core(self)
+        else:
+            self.training_core(self)
 
+
+    def training_core(self):
         time_start = time.time()
 
-        train_history = self.model.fit_generator(self.train_it, steps_per_epoch=math.ceil(TOTAL_IMAGES / BATCH_SIZE), epochs=EPOCHS)
+        #train_history = self.model.fit_generator(self.train_it, steps_per_epoch=math.ceil(TOTAL_IMAGES / BATCH_SIZE), epochs=EPOCHS)
+        train_history = self.model.fit(self.train_it[0], self.train_it[1], batch_size=BATCH_SIZE, epochs=EPOCHS)
 
         logger.info(f"[TRAIN-TIME] Completed local training in {(time.time() - time_start) / 60} minutes.")
 
@@ -98,7 +111,8 @@ class FederatedTask():
         self.model.save_weights("snapshots/Local-Weights-node01-MobileNetV2-{epoch:02d}.hdf5".format(epoch=self.epoch))
         logger.info("Saved checkpoint 'Local-Weights-node01-MobileNetV2-{epoch:02d}.hdf5'.".format(epoch=self.epoch))
 
-
+    
+    # UNUSED with compressed messages
     class NumpyArrayEncoder(JSONEncoder):
         def default(self, obj):
             if isinstance(obj, numpy.ndarray):
@@ -127,8 +141,7 @@ class FederatedTask():
 
         while publication[0] != 0:
             self.client.connect(MQTT_URL, MQTT_PORT, 60)
-            publication = self.client.publish("topic/fl-broadcast", compressed, qos=1)
-
+            publication = self.client.publish("topic/fl-broadcast", json.dumps(send_msg, cls=self.NumpyArrayEncoder), qos=1)
             logger.debug(f"Result code: {publication[0]} Mid: {publication[1]}")
 
 
@@ -139,6 +152,7 @@ class FederatedTask():
         try:
             logger.info("Loading Weights from message ...")
             #weights = json.loads(msg.payload)
+            
             # Decompress weights
             userdata['new_weights']['update'] = pickle.loads(zlib.decompress(msg.payload))
             
@@ -181,20 +195,18 @@ class FederatedTask():
 
         return weights
 
-
-    def __init__(self, client_id=-1):
-
+       
+    def main(self):
         self.client_id = client_id
-
+    
         try:
             os.mkdir("snapshots")
         except:
             pass
 
         # INIT MODEL
-        #self.model = keras.applications.mobilenet_v2.MobileNetV2(weights=None)
-        self.model = keras.applications.ResNet50V2(weights=None)
-
+        self.model = keras.applications.mobilenet_v2.MobileNetV2(input_shape = TARGET_SIZE + (3,), classes = 10, weights = None)
+        self.model = keras.applications.ResNet50V2(input_shape = TARGET_SIZE + (3,), classes = 10, weights = None)
         self.model.summary()
         # Compile the model
         self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -212,14 +224,27 @@ class FederatedTask():
             result = p.search(weights_checkpoints[0])
             self.epoch = int(result.group(1))
 
+        
         # create generator
-        datagen = ImageDataGenerator()
+        #datagen = ImageDataGenerator()
+        (x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar10.load_data() 
+
+        # convert and preprocess
+        y_train = keras.utils.to_categorical(y_train, 10) 
+        y_test = keras.utils.to_categorical(y_test, 10)
+        x_train = x_train.astype('float32')
+        x_test = x_test.astype('float32')
+        x_train  /= 255
+        x_test /= 255
+    
         # prepare an iterators for each dataset
-        self.train_it = datagen.flow_from_directory(IMAGENET_PATH,
-                                            target_size=TARGET_SIZE,
-                                            class_mode='categorical',
-                                            color_mode='rgb',
-                                            batch_size=BATCH_SIZE)
+        section_length = math.ceil(len(x_train) / TOTAL_CLIENTS_NUMBER)
+
+        starting_index = (section_length) * (CLIENT_NUMBER -1)
+
+        ending_index = min(len(x_train), starting_index + section_length)
+        logging.info(f"starting_index: {starting_index}, ending_index: {ending_index}")
+        self.train_it = (x_train[starting_index : ending_index], y_train[starting_index : ending_index])
 
         # create mqtt client
         self.new_weights = {'update': None}
@@ -234,3 +259,18 @@ class FederatedTask():
 
         
         self.client.loop_start()
+
+
+    def __init__(self, client_id=-1):
+        try:
+            GPU_NAME = tf.config.experimental.list_physical_devices('GPU')[GPU_INDEX]
+            
+            print("GPU_INDEX: ", GPU_INDEX, "GPU_NAME: ", gpu_name)
+
+            with tf.device(GPU_NAME):
+                self.main()
+                
+        except:
+
+            print("\nNO GPU DETECTED!\n")
+            self.main()

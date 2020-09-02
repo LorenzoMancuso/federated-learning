@@ -5,11 +5,15 @@ import paho.mqtt.client as mqtt
 from thespian.actors import *
 from common import *
 from model_utils import ModelUtils
+#from model_utils_cifar10 import ModelUtils
 import json
 from json import JSONEncoder
 import sys
-
+import time
 import numpy as np
+
+import pickle
+import zlib
 
 MQTT_URL = '172.20.8.119'
 MQTT_PORT = 1883
@@ -42,7 +46,12 @@ class AggregatorActor(Actor):
             for layer_weights in averaged_weights:
                 total_bytes += layer_weights.nbytes
 
-            publication = self.client.publish("topic/fl-update", json.dumps(averaged_weights, cls=self.NumpyArrayEncoder), qos=1)
+            compressed = zlib.compress(pickle.dumps(averaged_weights))
+
+            #publication = self.client.publish("topic/fl-update", json.dumps(averaged_weights, cls=self.NumpyArrayEncoder), qos=1)
+            publication = self.client.publish("topic/fl-update", compressed, qos=1)
+            
+            
             logging.debug(f"Result code: {publication[0]} Mid: {publication[1]} PayloadWeight: {sys.getsizeof(total_bytes)}", extra=extra)
             
             
@@ -72,7 +81,7 @@ class AggregatorActor(Actor):
             logging.warning("Connection failed. Retrying in 1 second...", extra=extra)
             
             time.sleep(1)
-            self.client.connect(MQTT_URL, MQTT_PORT, 60)
+            client.connect(MQTT_URL, MQTT_PORT, 60)
 
 
     def __init__(self, keep_alive: int = 60):
