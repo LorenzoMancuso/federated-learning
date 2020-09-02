@@ -27,30 +27,41 @@ COMMAND="ssh -i $CERT_PATH -J $PROXY"
 #ssh -i $CERT_PATH -J $PROXY lmancuso@device5 "rm -rf /home/lmancuso/dataset/subset/*"
 #echo 'clean device6'
 #ssh -i $CERT_PATH -J $PROXY lmancuso@device6 "rm -rf /home/lmancuso/dataset/subset/*"
-echo 'clean device7'
-ssh -i $CERT_PATH -J $PROXY lmancuso@device7 "rm -rf /home/lmancuso/dataset/subset/*"
-echo 'clean device8'
-ssh -i $CERT_PATH -J $PROXY lmancuso@device8 "rm -rf /home/lmancuso/dataset/subset/*"
-echo 'clean device9'
-ssh -i $CERT_PATH -J $PROXY lmancuso@device9 "rm -rf /home/lmancuso/dataset/subset/*"
-echo 'clean device10'
-ssh -i $CERT_PATH -J $PROXY lmancuso@device10 "rm -rf /home/lmancuso/dataset/subset/*"
-echo 'clean device11'
-ssh -i $CERT_PATH -J $PROXY lmancuso@device11 "rm -rf /home/lmancuso/dataset/subset/*"
-echo 'clean device12'
-ssh -i $CERT_PATH -J $PROXY lmancuso@device12 "rm -rf /home/lmancuso/dataset/subset/*"
-echo 'clean device13'
-ssh -i $CERT_PATH -J $PROXY lmancuso@device13 "rm -rf /home/lmancuso/dataset/subset/*"
-ssh -i $CERT_PATH -J $PROXY lmancuso@device13 "rm -rf /home/lmancuso/dataset/subset*"
-echo 'clean device14'
-ssh -i $CERT_PATH -J $PROXY lmancuso@device14 "rm -rf /home/lmancuso/dataset/subset/*"
-ssh -i $CERT_PATH -J $PROXY lmancuso@device14 "rm -rf /home/lmancuso/dataset/subset*"
-echo 'clean device15'
-ssh -i $CERT_PATH -J $PROXY lmancuso@device15 "rm -rf /home/lmancuso/dataset/subset/*"
-ssh -i $CERT_PATH -J $PROXY lmancuso@device15 "rm -rf /home/lmancuso/dataset/subset*"
-echo 'clean device16'
-ssh -i $CERT_PATH -J $PROXY lmancuso@device16 "rm -rf /home/lmancuso/dataset/subset/*"
-ssh -i $CERT_PATH -J $PROXY lmancuso@device16 "rm -rf /home/lmancuso/dataset/subset*"
+#echo 'clean device7'
+#ssh -i $CERT_PATH -J $PROXY lmancuso@device7 "rm -rf /home/lmancuso/dataset/subset/*"
+#echo 'clean device8'
+#ssh -i $CERT_PATH -J $PROXY lmancuso@device8 "rm -rf /home/lmancuso/dataset/subset/*"
+#echo 'clean device9'
+#ssh -i $CERT_PATH -J $PROXY lmancuso@device9 "rm -rf /home/lmancuso/dataset/subset/*"
+#echo 'clean device10'
+#ssh -i $CERT_PATH -J $PROXY lmancuso@device10 "rm -rf /home/lmancuso/dataset/subset/*"
+#echo 'clean device11'
+#ssh -i $CERT_PATH -J $PROXY lmancuso@device11 "rm -rf /home/lmancuso/dataset/subset/*"
+#echo 'clean device12'
+#ssh -i $CERT_PATH -J $PROXY lmancuso@device12 "rm -rf /home/lmancuso/dataset/subset/*"
+#echo 'clean device13'
+#ssh -i $CERT_PATH -J $PROXY lmancuso@device13 "rm -rf /home/lmancuso/dataset/subset/*"
+#ssh -i $CERT_PATH -J $PROXY lmancuso@device13 "rm -rf /home/lmancuso/dataset/subset*"
+#echo 'clean device14'
+#ssh -i $CERT_PATH -J $PROXY lmancuso@device14 "rm -rf /home/lmancuso/dataset/subset/*"
+#ssh -i $CERT_PATH -J $PROXY lmancuso@device14 "rm -rf /home/lmancuso/dataset/subset*"
+#echo 'clean device15'
+#ssh -i $CERT_PATH -J $PROXY lmancuso@device15 "rm -rf /home/lmancuso/dataset/subset/*"
+#ssh -i $CERT_PATH -J $PROXY lmancuso@device15 "rm -rf /home/lmancuso/dataset/subset*"
+#echo 'clean device16'
+#ssh -i $CERT_PATH -J $PROXY lmancuso@device16 "rm -rf /home/lmancuso/dataset/subset/*"
+#ssh -i $CERT_PATH -J $PROXY lmancuso@device16 "rm -rf /home/lmancuso/dataset/subset*"
+
+
+# GPU DEVICES
+echo 'node01'
+rsync --bwlimit=1800 -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAND" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset1/ lmancuso@node01:/home/lmancuso/dataset/subset/
+echo 'node02'
+rsync --bwlimit=1800 -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAND" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset2/ lmancuso@node02:/home/lmancuso/dataset/subset/
+echo 'node03'
+rsync --bwlimit=1800 -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAND" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset3/ lmancuso@node03:/home/lmancuso/dataset/subset/
+echo 'node04'
+rsync --bwlimit=1800 -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAND" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset4/ lmancuso@node04:/home/lmancuso/dataset/subset/
 
 
 # CPU DEVICES
@@ -66,30 +77,30 @@ ssh -i $CERT_PATH -J $PROXY lmancuso@device16 "rm -rf /home/lmancuso/dataset/sub
 #rsync -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAND" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset05/ lmancuso@device5:/home/lmancuso/dataset/subset/
 #echo 'device6'
 #rsync -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAND" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset06/ lmancuso@device6:/home/lmancuso/dataset/subset/
-echo 'device7'
-rsync -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAND" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset07/ lmancuso@device7:/home/lmancuso/dataset/subset/
-echo 'device8'
-rsync -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAND" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset08/ lmancuso@device8:/home/lmancuso/dataset/subset/
-echo 'device9'
-rsync -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAND" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset09/ lmancuso@device9:/home/lmancuso/dataset/subset/
-echo 'device10'
-rsync -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAND" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset10/ lmancuso@device10:/home/lmancuso/dataset/subset/
-echo 'device11'
-rsync -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAND" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset11/ lmancuso@device11:/home/lmancuso/dataset/subset/
-echo 'device12'
-rsync -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAND" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset12/ lmancuso@device12:/home/lmancuso/dataset/subset/
-# dataset device13
-echo 'device13'
-rsync -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAND" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset13/ lmancuso@device13:/home/lmancuso/dataset/subset/
-# dataset device14
-echo 'device14'
-rsync -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAND" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset14/ lmancuso@device14:/home/lmancuso/dataset/subset/
-# dataset device15
-echo 'device15'
-rsync -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAND" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset15/ lmancuso@device15:/home/lmancuso/dataset/subset/
-# dataset device16
-echo 'device16'
-rsync -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAND" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset16/ lmancuso@device16:/home/lmancuso/dataset/subset/
+#echo 'device7'
+#rsync -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAND" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset07/ lmancuso@device7:/home/lmancuso/dataset/subset/
+#echo 'device8'
+#rsync -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAND" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset08/ lmancuso@device8:/home/lmancuso/dataset/subset/
+#echo 'device9'
+#rsync -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAND" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset09/ lmancuso@device9:/home/lmancuso/dataset/subset/
+#echo 'device10'
+#rsync -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAND" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset10/ lmancuso@device10:/home/lmancuso/dataset/subset/
+#echo 'device11'
+#rsync -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAND" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset11/ lmancuso@device11:/home/lmancuso/dataset/subset/
+#echo 'device12'
+#rsync -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAND" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset12/ lmancuso@device12:/home/lmancuso/dataset/subset/
+## dataset device13
+#echo 'device13'
+#rsync -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAND" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset13/ lmancuso@device13:/home/lmancuso/dataset/subset/
+## dataset device14
+#echo 'device14'
+#rsync -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAND" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset14/ lmancuso@device14:/home/lmancuso/dataset/subset/
+## dataset device15
+#echo 'device15'
+#rsync -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAND" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset15/ lmancuso@device15:/home/lmancuso/dataset/subset/
+## dataset device16
+#echo 'device16'
+#rsync -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAND" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset16/ lmancuso@device16:/home/lmancuso/dataset/subset/
 
 
 
@@ -116,4 +127,4 @@ rsync -azv --append-verify --stats --human-readable --info=progress2 -e "$COMMAN
 #
 
 
-rsync --bwlimit=2000 -azv --append-verify --stats --human-readable --info=progress2 -e "ssh -i /home/lore/Scaricati/mancuso_federated -J lmancuso@130.192.137.199" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset3 lmancuso@gpu-worker:/mnt/dataset/IMAGENET/
+#rsync --bwlimit=2000 -azv --append-verify --stats --human-readable --info=progress2 -e "ssh -i /home/lore/Scaricati/mancuso_federated -J lmancuso@130.192.137.199" /media/lore/B6C8D9F4C8D9B33B/Users/lorym/Downloads/IMAGENET/1597433771/subset3 lmancuso@gpu-worker:/mnt/dataset/IMAGENET/
